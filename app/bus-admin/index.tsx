@@ -80,6 +80,58 @@ function formatDateInput(value: string) {
   return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
 }
 
+function formatDateToYmd(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function parseYmdDate(dateValue: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateValue);
+
+  if (!match) {
+    return null;
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+
+  return date;
+}
+
+function formatDateForDisplay(value: string) {
+  const date = parseYmdDate(value);
+
+  if (!date) {
+    return value;
+  }
+
+  return date.toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function formatDateChipLabel(date: Date) {
+  return date.toLocaleDateString('en-IN', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+  });
+}
+
 function isValidDate(dateValue: string): boolean {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateValue);
 
@@ -160,6 +212,7 @@ export default function BusAdminIndexScreen() {
 
   const [form, setForm] = useState<FormState>(defaultForm);
   const [submitting, setSubmitting] = useState(false);
+  const [activeDateField, setActiveDateField] = useState<'startDate' | 'reachingDate' | null>(null);
 
   const isWide = width >= 820;
 
@@ -168,8 +221,35 @@ export default function BusAdminIndexScreen() {
     [form.arrivalMeridiem, form.arrivalTime, form.departureMeridiem, form.departureTime],
   );
 
+  const dateOptions = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return Array.from({ length: 90 }, (_, index) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() + index);
+      return date;
+    });
+  }, []);
+
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const openDatePicker = (field: 'startDate' | 'reachingDate') => {
+    setActiveDateField(field);
+  };
+
+  const onSelectDate = (field: 'startDate' | 'reachingDate', selectedDate: Date) => {
+    const dateValue = formatDateToYmd(selectedDate);
+    setField(field, dateValue);
+
+    if (field === 'startDate' && form.reachingDate) {
+      const reaching = parseYmdDate(form.reachingDate);
+      if (reaching && reaching < selectedDate) {
+        setField('reachingDate', dateValue);
+      }
+    }
   };
 
   const onSubmit = async () => {
@@ -339,21 +419,30 @@ export default function BusAdminIndexScreen() {
 
           <View style={[styles.row, !isWide && styles.rowStack]}>
             <View style={styles.col}>
-              <LabeledInput
+              <DatePickerField
                 label="Start Date"
                 required
-                placeholder="YYYY-MM-DD"
                 value={form.startDate}
-                onChangeText={(value) => setField('startDate', formatDateInput(value))}
+                options={dateOptions}
+                isOpen={activeDateField === 'startDate'}
+                onOpen={() => openDatePicker('startDate')}
+                onClose={() => setActiveDateField(null)}
+                onSelectDate={(date) => onSelectDate('startDate', date)}
               />
             </View>
             <View style={styles.col}>
-              <LabeledInput
+              <DatePickerField
                 label="Reaching Date"
                 required
-                placeholder="YYYY-MM-DD"
                 value={form.reachingDate}
-                onChangeText={(value) => setField('reachingDate', formatDateInput(value))}
+                options={dateOptions.filter((date) => {
+                  const start = parseYmdDate(form.startDate);
+                  return !start || date >= start;
+                })}
+                isOpen={activeDateField === 'reachingDate'}
+                onOpen={() => openDatePicker('reachingDate')}
+                onClose={() => setActiveDateField(null)}
+                onSelectDate={(date) => onSelectDate('reachingDate', date)}
               />
             </View>
           </View>
@@ -453,6 +542,73 @@ type LabeledInputProps = {
   onChangeText?: (value: string) => void;
 };
 
+type DatePickerFieldProps = {
+  label: string;
+  required?: boolean;
+  value: string;
+  options: Date[];
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  onSelectDate: (date: Date) => void;
+};
+
+function DatePickerField({
+  label,
+  required,
+  value,
+  options,
+  isOpen,
+  onOpen,
+  onClose,
+  onSelectDate,
+}: DatePickerFieldProps) {
+  return (
+    <View style={styles.fieldWrap}>
+      <Text style={styles.label}>
+        {label}
+        {required ? ' *' : ''}
+      </Text>
+
+      <TouchableOpacity activeOpacity={0.85} onPress={onOpen} style={styles.dateInputButton}>
+        <Ionicons color="#94a3b8" name="calendar-outline" size={18} />
+        <Text style={[styles.dateInputText, !value && styles.datePlaceholder]}>
+          {value ? formatDateForDisplay(value) : 'Select date'}
+        </Text>
+      </TouchableOpacity>
+
+      {isOpen && (
+        <View style={styles.datePickerWrap}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.dateChipsRow}
+          >
+            {options.map((date) => {
+              const dateValue = formatDateToYmd(date);
+              const active = dateValue === value;
+
+              return (
+                <TouchableOpacity
+                  key={dateValue}
+                  style={[styles.dateChipButton, active && styles.dateChipButtonActive]}
+                  onPress={() => onSelectDate(date)}
+                >
+                  <Text style={[styles.dateChipText, active && styles.dateChipTextActive]}>{formatDateChipLabel(date)}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          <TouchableOpacity activeOpacity={0.85} onPress={onClose} style={styles.dateDoneButton}>
+            <Text style={styles.dateDoneText}>Done</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+}
+
 function LabeledInput({
   label,
   placeholder,
@@ -535,6 +691,69 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f5f9',
     color: '#0f766e',
     fontWeight: '700',
+  },
+  dateChipButton: {
+    backgroundColor: '#f8fafc',
+    borderColor: '#d5dce6',
+    borderRadius: 18,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  dateChipButtonActive: {
+    backgroundColor: '#dff7ea',
+    borderColor: '#10b981',
+  },
+  dateChipText: {
+    color: '#334155',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  dateChipTextActive: {
+    color: '#047857',
+  },
+  dateChipsRow: {
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  dateDoneButton: {
+    alignItems: 'center',
+    borderTopColor: '#e2e8f0',
+    borderTopWidth: 1,
+    paddingVertical: 10,
+  },
+  dateDoneText: {
+    color: '#059669',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  dateInputButton: {
+    alignItems: 'center',
+    backgroundColor: '#f8fafc',
+    borderColor: '#d5dce6',
+    borderRadius: 10,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    minHeight: 48,
+    paddingHorizontal: 12,
+  },
+  dateInputText: {
+    color: '#1e293b',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  datePickerWrap: {
+    backgroundColor: '#ffffff',
+    borderColor: '#d5dce6',
+    borderRadius: 10,
+    borderWidth: 1,
+    marginTop: 8,
+    overflow: 'hidden',
+  },
+  datePlaceholder: {
+    color: '#9aa4b2',
   },
   label: {
     color: '#334155',

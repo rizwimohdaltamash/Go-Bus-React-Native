@@ -38,18 +38,33 @@ function formatBusTime(time?: unknown, meridiem?: unknown, isAm?: unknown): stri
   return suffix ? `${safeTime} ${suffix}` : safeTime;
 }
 
-function formatDateInput(value: string): string {
-  const digits = value.replace(/[^0-9]/g, '').slice(0, 8);
+function formatDateToYmd(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
-  if (digits.length <= 4) {
-    return digits;
+function formatDateForDisplay(dateValue: string): string {
+  const parsedDate = parseDateString(dateValue);
+
+  if (!parsedDate) {
+    return dateValue;
   }
 
-  if (digits.length <= 6) {
-    return `${digits.slice(0, 4)}-${digits.slice(4)}`;
-  }
+  return parsedDate.toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
 
-  return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
+function formatDateChipLabel(date: Date): string {
+  return date.toLocaleDateString('en-IN', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+  });
 }
 
 function parseDateString(dateValue?: unknown): Date | null {
@@ -94,6 +109,8 @@ export default function SearchScreen() {
   const [fromCity, setFromCity] = useState('');
   const [toCity, setToCity] = useState('');
   const [journeyDate, setJourneyDate] = useState('');
+  const [pickerDate, setPickerDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [activeInput, setActiveInput] = useState<'from' | 'to' | null>(null);
   const [allBuses, setAllBuses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -141,6 +158,17 @@ export default function SearchScreen() {
     ).slice(0, 6);
   }, [toCity, activeInput, fromCity]);
 
+  const upcomingDates = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return Array.from({ length: 60 }, (_, index) => {
+      const nextDate = new Date(today);
+      nextDate.setDate(today.getDate() + index);
+      return nextDate;
+    });
+  }, []);
+
   // Filter buses based on selected cities
   const filteredBuses = useMemo(() => {
     let results = allBuses;
@@ -179,6 +207,24 @@ export default function SearchScreen() {
   const handleSelectToCity = (city: string) => {
     setToCity(city);
     setActiveInput(null);
+  };
+
+  const handleOpenDatePicker = () => {
+    Haptics.selectionAsync();
+    setActiveInput(null);
+
+    const parsedDate = parseDateString(journeyDate);
+    if (parsedDate) {
+      setPickerDate(parsedDate);
+    }
+
+    setShowDatePicker(true);
+  };
+
+  const handleSelectDate = (selectedDate: Date) => {
+    setPickerDate(selectedDate);
+    setJourneyDate(formatDateToYmd(selectedDate));
+    setShowDatePicker(false);
   };
 
   const renderBusCard = ({ item }: any) => (
@@ -351,23 +397,55 @@ export default function SearchScreen() {
 
         <View style={styles.fromToSection}>
           <Text style={styles.fieldLabel}>Journey Date</Text>
-          <View style={styles.inputWrapper}>
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={handleOpenDatePicker}
+            style={styles.inputWrapper}
+            disabled={loading}
+          >
             <Ionicons name="calendar-outline" size={18} color="#98a2b3" />
-            <TextInput
-              style={styles.input}
-              placeholder="YYYY-MM-DD"
-              placeholderTextColor="#d0d5dd"
-              value={journeyDate}
-              onChangeText={(value) => setJourneyDate(formatDateInput(value))}
-              editable={!loading}
-              keyboardType="number-pad"
-            />
+            <Text style={[styles.input, !journeyDate && styles.datePlaceholder]}>
+              {journeyDate ? formatDateForDisplay(journeyDate) : 'Select journey date'}
+            </Text>
             {journeyDate ? (
               <TouchableOpacity onPress={() => setJourneyDate('')}>
                 <Ionicons name="close-circle" size={18} color="#98a2b3" />
               </TouchableOpacity>
             ) : null}
-          </View>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <View style={styles.datePickerWrap}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.dateChipsRow}
+              >
+                {upcomingDates.map((dateItem) => {
+                  const value = formatDateToYmd(dateItem);
+                  const isSelected = value === journeyDate;
+
+                  return (
+                    <TouchableOpacity
+                      key={value}
+                      style={[styles.dateChipButton, isSelected && styles.dateChipButtonSelected]}
+                      onPress={() => handleSelectDate(dateItem)}
+                    >
+                      <Text style={[styles.dateChipLabel, isSelected && styles.dateChipLabelSelected]}>
+                        {formatDateChipLabel(dateItem)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+              <TouchableOpacity
+                style={styles.dateDoneButton}
+                onPress={() => setShowDatePicker(false)}
+              >
+                <Text style={styles.dateDoneButtonText}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         {/* Search Button */}
@@ -516,6 +594,53 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     marginLeft: 8,
+  },
+  datePlaceholder: {
+    color: '#d0d5dd',
+  },
+  datePickerWrap: {
+    marginTop: 10,
+    borderColor: '#dbe9e2',
+    borderWidth: 1,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  dateChipsRow: {
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  dateChipButton: {
+    borderColor: '#dbe9e2',
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#f8fdfb',
+  },
+  dateChipButtonSelected: {
+    backgroundColor: '#0ea663',
+    borderColor: '#0ea663',
+  },
+  dateChipLabel: {
+    color: '#0f172a',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  dateChipLabelSelected: {
+    color: '#ffffff',
+  },
+  dateDoneButton: {
+    borderTopColor: '#eff0f3',
+    borderTopWidth: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  dateDoneButtonText: {
+    color: '#0ea663',
+    fontSize: 15,
+    fontWeight: '700',
   },
   
   // Search Button Styles
