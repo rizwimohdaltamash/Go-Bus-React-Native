@@ -6,91 +6,64 @@
 
 <br/>
 
-</div>
-
-**Go Bus** is a cross-platform bus ticket booking app built with **React Native** and **Expo**, with **Firebase** as the backend. One app serves two kinds of users:
-
-- **🧑 Passengers** search buses by route and date, choose seats on a live two-deck seat map, pay, and get a ticket with a PNR that they can save as a PDF and share.
-- **🧑‍✈️ Bus operators** register their buses with routes, schedules, and fares, then manage bookings: they can see who booked which seat and cancel tickets when needed.
-
-Users sign up with email and pick a role. From then on the app shows only the screens for that role, and the layout files enforce this.
-
-### ✨ Highlights
-
-| | |
-| :-- | :-- |
-| 🎫 **Two-deck seat map** | 36 seats across a lower and an upper deck. Seats that are already booked are locked, and the map re-checks availability when it opens. |
-| 🔐 **Role-based access** | Separate tab groups for passengers and operators, with automatic redirects |
-| 🧾 **PDF tickets** | Generated on the phone from HTML and shared through WhatsApp, Gmail, Drive, and others |
-| 🔢 **Booking ID + PNR** | Every booking gets a unique 10-character ID and a 6-character PNR |
-| 🚍 **Fleet management** | Register, edit, and delete buses. Trip duration is calculated automatically. |
-| ❌ **Cancellations** | Passengers or operators can cancel a booking, which frees its seats again. The record is kept with who cancelled it. |
-| 📳 **Haptic feedback** | Tactile feedback on taps, seat selection, and payment results |
-| 🌗 **Light & dark theme** | Follows the device setting |
-
-<br/>
-
-### 🛠️ Built with
-
 <table>
   <tr>
-    <td align="right"><b>App framework</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/React%20Native-0.81-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native"/>
-      <img src="https://img.shields.io/badge/React-19.1-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React"/>
-      <img src="https://img.shields.io/badge/Expo-SDK%2054-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo"/>
-      <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+    <td align="center" width="96">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="48" height="48" alt="React Native"/>
+      <br/><sub><b>React Native</b></sub>
     </td>
-  </tr>
-  <tr>
-    <td align="right"><b>Navigation</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/Expo%20Router-v6-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo Router"/>
-      <img src="https://img.shields.io/badge/React%20Navigation-v7-6B52AE?style=for-the-badge&logo=react&logoColor=white" alt="React Navigation"/>
+    <td align="center" width="96">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://cdn.simpleicons.org/expo/white"/>
+        <img src="https://cdn.simpleicons.org/expo/000020" width="48" height="48" alt="Expo"/>
+      </picture>
+      <br/><sub><b>Expo</b></sub>
     </td>
-  </tr>
-  <tr>
-    <td align="right"><b>Backend</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/Firebase%20Auth-Email%20Login-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase Auth"/>
-      <img src="https://img.shields.io/badge/Cloud%20Firestore-Database-FF6F00?style=for-the-badge&logo=firebase&logoColor=white" alt="Cloud Firestore"/>
-      <img src="https://img.shields.io/badge/AsyncStorage-Session-4B32C3?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage"/>
+    <td align="center" width="96">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="48" height="48" alt="TypeScript"/>
+      <br/><sub><b>TypeScript</b></sub>
     </td>
-  </tr>
-  <tr>
-    <td align="right"><b>Device features</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/expo--print-PDF%20Tickets-000020?style=for-the-badge&logo=expo&logoColor=white" alt="expo-print"/>
-      <img src="https://img.shields.io/badge/expo--sharing-Share%20Sheet-000020?style=for-the-badge&logo=expo&logoColor=white" alt="expo-sharing"/>
-      <img src="https://img.shields.io/badge/expo--haptics-Vibration-000020?style=for-the-badge&logo=expo&logoColor=white" alt="expo-haptics"/>
-      <img src="https://img.shields.io/badge/WebView-Payments-0C2340?style=for-the-badge&logo=razorpay&logoColor=white" alt="WebView"/>
+    <td align="center" width="96">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-original.svg" width="48" height="48" alt="Firebase"/>
+      <br/><sub><b>Firebase</b></sub>
     </td>
-  </tr>
-  <tr>
-    <td align="right"><b>UI & animation</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/Reanimated-v4-001A72?style=for-the-badge&logo=react&logoColor=white" alt="Reanimated"/>
-      <img src="https://img.shields.io/badge/Expo%20Vector%20Icons-Material%20%2B%20Ionicons-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Vector Icons"/>
-      <img src="https://img.shields.io/badge/Linear%20Gradient-expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Linear Gradient"/>
+    <td align="center" width="96">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="48" height="48" alt="Node.js"/>
+      <br/><sub><b>Node.js</b></sub>
     </td>
-  </tr>
-  <tr>
-    <td align="right"><b>Tooling & build</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/EAS%20Build-APK%20%2B%20AAB-4630EB?style=for-the-badge&logo=expo&logoColor=white" alt="EAS Build"/>
-      <img src="https://img.shields.io/badge/ESLint-v9-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint"/>
-      <img src="https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js"/>
+    <td align="center" width="96">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="48" height="48" alt="Android"/>
+      <br/><sub><b>Android</b></sub>
     </td>
-  </tr>
-  <tr>
-    <td align="right"><b>Runs on</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android"/>
-      <img src="https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS"/>
-      <img src="https://img.shields.io/badge/Web-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Web"/>
+    <td align="center" width="96">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://cdn.simpleicons.org/apple/white"/>
+        <img src="https://cdn.simpleicons.org/apple/000000" width="48" height="48" alt="iOS"/>
+      </picture>
+      <br/><sub><b>iOS</b></sub>
     </td>
   </tr>
 </table>
+
+</div>
+
+<br/>
+
+**Go Bus** is a cross-platform bus ticket booking app built with **React Native** and **Expo**, with **Firebase** as the backend. One app serves two kinds of users:
+
+- **🧑 Passengers** search buses by route and date, choose seats on a two-deck seat map, pay, and get a ticket with a PNR that they can save as a PDF and share.
+- **🧑‍✈️ Bus operators** register their buses with routes, schedules, and fares, then manage bookings: they can see who booked which seat and cancel tickets when needed.
+
+### ✨ Key features
+
+| | |
+| :-- | :-- |
+| 🎫 **Two-deck seat map** | Pick seats on the lower or upper deck. Seats that are already booked are locked. |
+| 🔐 **Role-based access** | Passengers and operators each see only their own screens. |
+| 🧾 **PDF tickets** | Tickets are generated on the phone and can be shared to WhatsApp, Gmail, and others. |
+| 🔢 **Booking ID + PNR** | Every booking gets a unique ID and PNR. |
+| 🚍 **Fleet management** | Operators can register, edit, and delete their buses. |
+| ❌ **Cancellations** | Passengers or operators can cancel a booking, which frees its seats again. |
 
 ---
 
