@@ -2,37 +2,99 @@
 
 # 🚌 Go Bus
 
-**A bus ticket booking app for passengers and bus operators, built with Expo + Firebase.**
+### Book bus tickets and manage bus fleets, all in one mobile app.
 
-![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?style=flat-square&logo=expo&logoColor=white)
-![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?style=flat-square&logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-FFCA28?style=flat-square&logo=firebase&logoColor=black)
-![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-4CAF50?style=flat-square)
+<br/>
 
 </div>
 
+**Go Bus** is a cross-platform bus ticket booking app built with **React Native** and **Expo**, with **Firebase** as the backend. One app serves two kinds of users:
+
+- **🧑 Passengers** search buses by route and date, choose seats on a live two-deck seat map, pay, and get a ticket with a PNR that they can save as a PDF and share.
+- **🧑‍✈️ Bus operators** register their buses with routes, schedules, and fares, then manage bookings: they can see who booked which seat and cancel tickets when needed.
+
+Users sign up with email and pick a role. From then on the app shows only the screens for that role, and the layout files enforce this.
+
+### ✨ Highlights
+
+| | |
+| :-- | :-- |
+| 🎫 **Two-deck seat map** | 36 seats across a lower and an upper deck. Seats that are already booked are locked, and the map re-checks availability when it opens. |
+| 🔐 **Role-based access** | Separate tab groups for passengers and operators, with automatic redirects |
+| 🧾 **PDF tickets** | Generated on the phone from HTML and shared through WhatsApp, Gmail, Drive, and others |
+| 🔢 **Booking ID + PNR** | Every booking gets a unique 10-character ID and a 6-character PNR |
+| 🚍 **Fleet management** | Register, edit, and delete buses. Trip duration is calculated automatically. |
+| ❌ **Cancellations** | Passengers or operators can cancel a booking, which frees its seats again. The record is kept with who cancelled it. |
+| 📳 **Haptic feedback** | Tactile feedback on taps, seat selection, and payment results |
+| 🌗 **Light & dark theme** | Follows the device setting |
+
+<br/>
+
+### 🛠️ Built with
+
+<table>
+  <tr>
+    <td align="right"><b>App framework</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/React%20Native-0.81-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native"/>
+      <img src="https://img.shields.io/badge/React-19.1-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React"/>
+      <img src="https://img.shields.io/badge/Expo-SDK%2054-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo"/>
+      <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right"><b>Navigation</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/Expo%20Router-v6-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo Router"/>
+      <img src="https://img.shields.io/badge/React%20Navigation-v7-6B52AE?style=for-the-badge&logo=react&logoColor=white" alt="React Navigation"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right"><b>Backend</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/Firebase%20Auth-Email%20Login-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase Auth"/>
+      <img src="https://img.shields.io/badge/Cloud%20Firestore-Database-FF6F00?style=for-the-badge&logo=firebase&logoColor=white" alt="Cloud Firestore"/>
+      <img src="https://img.shields.io/badge/AsyncStorage-Session-4B32C3?style=for-the-badge&logo=react&logoColor=white" alt="AsyncStorage"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right"><b>Device features</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/expo--print-PDF%20Tickets-000020?style=for-the-badge&logo=expo&logoColor=white" alt="expo-print"/>
+      <img src="https://img.shields.io/badge/expo--sharing-Share%20Sheet-000020?style=for-the-badge&logo=expo&logoColor=white" alt="expo-sharing"/>
+      <img src="https://img.shields.io/badge/expo--haptics-Vibration-000020?style=for-the-badge&logo=expo&logoColor=white" alt="expo-haptics"/>
+      <img src="https://img.shields.io/badge/WebView-Payments-0C2340?style=for-the-badge&logo=razorpay&logoColor=white" alt="WebView"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right"><b>UI & animation</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/Reanimated-v4-001A72?style=for-the-badge&logo=react&logoColor=white" alt="Reanimated"/>
+      <img src="https://img.shields.io/badge/Expo%20Vector%20Icons-Material%20%2B%20Ionicons-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Vector Icons"/>
+      <img src="https://img.shields.io/badge/Linear%20Gradient-expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Linear Gradient"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right"><b>Tooling & build</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/EAS%20Build-APK%20%2B%20AAB-4630EB?style=for-the-badge&logo=expo&logoColor=white" alt="EAS Build"/>
+      <img src="https://img.shields.io/badge/ESLint-v9-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint"/>
+      <img src="https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right"><b>Runs on</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android"/>
+      <img src="https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS"/>
+      <img src="https://img.shields.io/badge/Web-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Web"/>
+    </td>
+  </tr>
+</table>
+
 ---
 
-## Contents
-
-1. [What it does](#1-what-it-does)
-2. [Quick start](#2-quick-start)
-3. [Architecture](#3-architecture)
-4. [Navigation & access control](#4-navigation--access-control)
-5. [Booking flow](#5-booking-flow)
-6. [Data model](#6-data-model)
-7. [Seat layout](#7-seat-layout)
-8. [Project structure](#8-project-structure)
-9. [Building with EAS](#9-building-with-eas)
-10. [Known limitations](#10-known-limitations)
-11. [Troubleshooting](#11-troubleshooting)
-
----
-
-## 1. What it does
-
-Go Bus has **two roles**. You pick a role when you sign up, and the app shows a different set of tabs for each one.
+## 1. Roles at a glance
 
 | | 🧑 Passenger (`user`) | 🧑‍✈️ Bus operator (`busAdmin`) |
 | :-- | :-- | :-- |
